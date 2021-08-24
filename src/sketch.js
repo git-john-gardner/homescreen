@@ -31,9 +31,9 @@ const sketch = function (p) {
     p.draw = function () {
         p.background(255, 250, 255);
         p.noStroke()
-        p.fill(50, 200)
-        const t = p.frameCount / 600
-        bubbles(t, 5).forEach(b => {
+        p.fill(50, 150)
+        const t = p.frameCount / 1000
+        bubbles(t, 10).forEach(b => {
             const { center: { x, y }, r } = b
             p.ellipse(x, y, 2 * r)
         })
@@ -41,4 +41,4 @@ const sketch = function (p) {
 
 }
 
-const myp5 = new p5(sketch)
+export { sketch }
