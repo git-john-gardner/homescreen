@@ -5,4 +5,39 @@ html, body {
 canvas {
     display: block;
 }
-  
+
+.content {
+    display: grid;
+    align-content: center;
+    position: fixed;
+    align-items: center;
+    align-content: center;
+    /* width: 200px; */
+    /* height: 50%; */
+    margin: 10px;
+    padding: 20px;
+    top: 0;
+    right: 0;
+    background-color: black;
+    color: white;
+    text-align: center;
+    font-family:  'Roboto Mono', monospace;
+    font-weight: 100;
+    user-select: none;
+    opacity: 0.5;
+    border-radius: 20px;
+}
+
+#clock {
+    margin: 0 auto;
+    opacity: 1;
+    font-size: 60px;
+    user-select: none;
+    text-align: end;
+}
+
+#crypto pre {
+    margin: 0 auto;
+    font-size: 25px;
+    color: wheat;
+}

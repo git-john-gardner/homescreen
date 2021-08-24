@@ -1,5 +1,5 @@
 export default {
-    input: 'src/sketch.js',
+    input: 'src/main.js',
     output: {
         file: 'public/main.js',
         format: 'iife',

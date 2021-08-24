@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    const { sin, cos, PI } = Math;
+    const { sin, cos, PI, max, min } = Math;
 
     /**  
     * Create an array of n objects
@@ -26,6 +26,38 @@
             x: r * sin(turns * 2 * PI),
             y: r * cos(turns * 2 * PI)
         }
+    };
+
+    /**
+     * Get a clean string representation of a table
+     * 
+     * @param table array of columns to space
+     * @param sep column separator
+     * @returns a string of the table properly spaced
+     * 
+     * @example
+     * evenlySpaced([['hello', 1], ['world!', 23]])
+     * >>> 'hello  :  1
+     *      world! : 23' 
+     */
+    const evenlySpaced = (table, sep = " : ") => {
+        if (table.length === 0) return
+
+        // convert contents to strings
+        table = table.map(row => row.map(String));
+
+        let maxes = table[0].map(col => 0);
+        table.forEach(row => {
+            row.forEach((col, idx) => {
+                maxes[idx] = max(col.length, maxes[idx]);
+            });
+        });
+
+        return table.map(
+            row => row.map(
+                (col, idx) => col.padStart(maxes[idx])
+            ).join(sep)
+        ).join("\n")
     };
 
     const sketch = function (p) {
@@ -59,9 +91,9 @@
         p.draw = function () {
             p.background(255, 250, 255);
             p.noStroke();
-            p.fill(50, 200);
-            const t = p.frameCount / 600;
-            bubbles(t, 5).forEach(b => {
+            p.fill(50, 150);
+            const t = p.frameCount / 1000;
+            bubbles(t, 10).forEach(b => {
                 const { center: { x, y }, r } = b;
                 p.ellipse(x, y, 2 * r);
             });
@@ -69,6 +101,44 @@
 
     };
 
-    new p5(sketch);
+    /**
+     * Format number as pounds sterling
+     */
+    const pounds = new Intl.NumberFormat(
+        'en-GB',
+        { style: 'currency', currency: 'GBP' }
+    ).format;
+
+    /**
+     * Query CoinGecko for the prices of crypto tokens
+     * 
+     * @async
+     * @param {string[]} coins names of coins
+     * @param {string} currency 
+     * @returns {Promise} a promise containing the data
+     */
+    const fetchPrices = async (coins, currency = "gbp") => {
+        const url = "https://api.coingecko.com/api/v3/simple/price"
+            + `?ids=${coins.join("%2C")}&vs_currencies=${currency}`;
+        const response = await fetch(url);
+        return await response.json()
+    };
+
+    const startClock = (div) => {
+        const format = new Intl.DateTimeFormat('en-GB', { timeStyle: 'short' }).format;
+        const now = new Date();
+        div.innerText = format(now);
+        setTimeout(() => startClock(div), 1000);
+    };
+
+    new p5(sketch, "sketch");
+    startClock(document.getElementById("clock"));
+
+    const coins = "ethereum cardano bitcoin";
+    fetchPrices(coins.split(" ")).then(data => {
+        const prices = Object.entries(data).map(e => [e[0], pounds(e[1].gbp)]);
+        prices.sort();
+        document.getElementById("crypto").innerHTML = `<pre>${evenlySpaced(prices)}</pre>`;
+    });
 
 }());

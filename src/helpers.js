@@ -1,4 +1,4 @@
-const { sin, cos, PI } = Math
+const { sin, cos, PI, max, min } = Math
 
 /**  
 * Create an array of n objects
@@ -25,4 +25,36 @@ const pointOnCircle = (turns, r = 1) => {
     }
 }
 
-export { createNThings, pointOnCircle }
+/**
+ * Get a clean string representation of a table
+ * 
+ * @param table array of columns to space
+ * @param sep column separator
+ * @returns a string of the table properly spaced
+ * 
+ * @example
+ * evenlySpaced([['hello', 1], ['world!', 23]])
+ * >>> 'hello  :  1
+ *      world! : 23' 
+ */
+const evenlySpaced = (table, sep = " : ") => {
+    if (table.length === 0) return
+
+    // convert contents to strings
+    table = table.map(row => row.map(String))
+
+    let maxes = table[0].map(col => 0)
+    table.forEach(row => {
+        row.forEach((col, idx) => {
+            maxes[idx] = max(col.length, maxes[idx])
+        })
+    })
+
+    return table.map(
+        row => row.map(
+            (col, idx) => col.padStart(maxes[idx])
+        ).join(sep)
+    ).join("\n")
+}
+
+export { createNThings, pointOnCircle, evenlySpaced }
